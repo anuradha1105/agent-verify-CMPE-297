@@ -85,8 +85,17 @@ def summarise(rows, cases):
     return s
 
 
-def runs(system, cases, n, offset=0):
-    return [summarise(run_once(system, cases, offset + i), cases) for i in range(n)]
+def runs(system, cases, n, offset=0, strict=False):
+    out = []
+    for i in range(n):
+        rows = run_once(system, cases, offset + i)
+        errs = [(cid, r["error"]) for cid, r in rows.items() if r["error"]]
+        if strict and errs:
+            # FIX (team): a baseline measured on crashed calls is a 0% baseline that later passes everything
+            sys.exit(f"A/A aborted: {len(errs)} of {len(rows)} cases raised an error in run {i + 1}, "
+                     f"first: {errs[0][0]}: {errs[0][1]}")
+        out.append(summarise(rows, cases))
+    return out
 
 
 def main():
@@ -115,7 +124,7 @@ def main():
     cats = sorted({c["category"] for c in cases}) + ["overall"]
 
     if args.aa:
-        ss = runs(system, cases, args.aa_runs)
+        ss = runs(system, cases, args.aa_runs, strict=True)
         base = {k: statistics.mean(s[k] for s in ss) for k in cats + ["tokens"]}
         sd = {k: statistics.pstdev([s[k] for s in ss]) for k in cats}
         sigma = {k: sd[k] * math.sqrt(2 / R) for k in cats}

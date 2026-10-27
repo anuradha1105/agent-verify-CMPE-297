@@ -13,6 +13,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Check model key
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          p=$(python -c "import json;print(json.load(open('manifest.json'))['provider'])")
+          k=$( [ "$p" = gemini ] && echo "$GEMINI_API_KEY" || echo "$OPENAI_API_KEY" )
+          [ -n "$k" ] || { echo "::error::no API key secret for provider $p (Settings > Secrets and variables > Actions)"; exit 1; }
       # standard library only: nothing to pip install
       - name: Eval gate
         env:
