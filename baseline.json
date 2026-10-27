@@ -1,0 +1,56 @@
+{
+ "manifest": {
+  "release": "agent-verify-0.1.0",
+  "adapter": "system",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash-lite",
+  "prompt_version": "v1",
+  "policy_version": "v1",
+  "tools_version": "v1",
+  "index_version": "none: evidence is passed inline with each case; no retrieval, index or chunking",
+  "artifact_sha": {
+   "prompt": "435575c494b5",
+   "policy": "2c29986ed875",
+   "tools": "9bd332153a1d"
+  },
+  "settings": {
+   "temperature": 0.3,
+   "max_output_tokens": 1024,
+   "approve_threshold": 0.8
+  },
+  "eval_set_hash": "530dea692c47",
+  "gate": {
+   "runs": 3,
+   "max_drop_sigma": 3,
+   "max_token_increase": 0.2,
+   "critical": [
+    "critical"
+   ]
+  }
+ },
+ "eval_set_hash": "530dea692c47",
+ "aa_runs": 6,
+ "runs_per_comparison": 3,
+ "mean": {
+  "approve": 0.9,
+  "block": 0.8333333333333334,
+  "critical": 1.0,
+  "review": 0.7166666666666667,
+  "overall": 0.8385416666666666,
+  "tokens": 38.703125
+ },
+ "run_sd": {
+  "approve": 0.0,
+  "block": 0.05892556509887896,
+  "critical": 0.0,
+  "review": 0.0687184270936277,
+  "overall": 0.03334960540329609
+ },
+ "sigma": {
+  "approve": 0.0,
+  "block": 0.048112522432468816,
+  "critical": 0.0,
+  "review": 0.056108360768678235,
+  "overall": 0.027229838787080074
+ }
+}
