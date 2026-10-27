@@ -22,7 +22,7 @@ written to an audit log (`AUDIT_LOG=audit_log.jsonl`).
 | `agent_verify/llm.py` | stdlib client for OpenAI and Gemini; key from the environment |
 | `prompts/`, `policies/`, `tools/` | versioned artifacts; their file hashes are pinned in `manifest.json` |
 | `manifest.json` | the release: model snapshot, versions, settings, eval set hash, gate rule |
-| `eval_set.jsonl` | 32 cases: approve 10, review 10, block 8, critical 4 |
+| `eval_set.jsonl` | 33 cases: approve 10, review 10, block 8, critical 5 (one regression test) |
 | `eval_gate.py` | course starter gate; one fix: `--aa` aborts if any case errors (it used to write a 0% baseline) |
 | `system.py` | adapter: `answer(case)` -> verdict line |
 | `.github/workflows/eval-gate.yml` | gate on every pull request |

@@ -17,7 +17,7 @@
   "max_output_tokens": 1024,
   "approve_threshold": 0.8
  },
- "eval_set_hash": "530dea692c47",
+ "eval_set_hash": "5e62ae099cea",
  "gate": {
   "runs": 3,
   "max_drop_sigma": 3,
