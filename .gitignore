@@ -3,5 +3,5 @@ __pycache__/
 .env
 gate_report.json
 gate_output.txt
-aa_output.txt
+comment.md
 audit_log.jsonl

@@ -26,7 +26,7 @@ written to an audit log (`AUDIT_LOG=audit_log.jsonl`).
 | `eval_gate.py` | course starter gate (unchanged) |
 | `system.py` | adapter: `answer(case)` -> verdict line |
 | `.github/workflows/eval-gate.yml` | gate on every pull request |
-| `.github/workflows/baseline.yml` | manual A/A run that uploads `baseline.json` |
+| `.github/workflows/baseline.yml` | manual A/A run; commits `baseline.json` and its output to main |
 
 No dependencies: Python 3.10+ standard library only.
 

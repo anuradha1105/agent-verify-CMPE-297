@@ -4,6 +4,9 @@ name: eval-gate
 on:
   pull_request:
   workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
   gate:
     runs-on: ubuntu-latest
@@ -38,3 +41,11 @@ jobs:
             gate_report.json
             gate_output.txt
             audit_log.jsonl
+      - name: Post the verdict on the pull request
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "### Eval gate"; echo; echo '```'; cat gate_output.txt 2>/dev/null || echo "gate did not run"; echo '```';
+            echo; echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; } > comment.md
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md
