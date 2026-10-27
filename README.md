@@ -23,7 +23,7 @@ written to an audit log (`AUDIT_LOG=audit_log.jsonl`).
 | `prompts/`, `policies/`, `tools/` | versioned artifacts; their file hashes are pinned in `manifest.json` |
 | `manifest.json` | the release: model snapshot, versions, settings, eval set hash, gate rule |
 | `eval_set.jsonl` | 32 cases: approve 10, review 10, block 8, critical 4 |
-| `eval_gate.py` | course starter gate (unchanged) |
+| `eval_gate.py` | course starter gate; one fix: `--aa` aborts if any case errors (it used to write a 0% baseline) |
 | `system.py` | adapter: `answer(case)` -> verdict line |
 | `.github/workflows/eval-gate.yml` | gate on every pull request |
 | `.github/workflows/baseline.yml` | manual A/A run; commits `baseline.json` and its output to main |
