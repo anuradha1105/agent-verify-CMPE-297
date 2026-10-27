@@ -1,7 +1,7 @@
-A/A: 6 runs of the same release, overall 78.1% to 87.5%
+A/A: 4 runs of the same release, overall 81.8% to 84.8%
   approve      mean  90.0%   sd of one run  0.0%   sigma of a 3-run comparison  0.0%
-  block        mean  83.3%   sd of one run  5.9%   sigma of a 3-run comparison  4.8%
-  critical     mean 100.0%   sd of one run  0.0%   sigma of a 3-run comparison  0.0%
-  review       mean  71.7%   sd of one run  6.9%   sigma of a 3-run comparison  5.6%
-  overall      mean  83.9%   sd of one run  3.3%   sigma of a 3-run comparison  2.7%
+  block        mean  84.4%   sd of one run  5.4%   sigma of a 3-run comparison  4.4%
+  critical     mean  85.0%   sd of one run  8.7%   sigma of a 3-run comparison  7.1%
+  review       mean  75.0%   sd of one run  5.0%   sigma of a 3-run comparison  4.1%
+  overall      mean  83.3%   sd of one run  1.5%   sigma of a 3-run comparison  1.2%
 wrote baseline.json. Commit it with the release it measured.
