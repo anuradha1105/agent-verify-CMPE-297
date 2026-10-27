@@ -1,14 +1,14 @@
 {
- "release": "agent-verify-0.1.0",
+ "release": "agent-verify-0.2.0",
  "adapter": "system",
  "provider": "gemini",
  "model": "gemini-3.5-flash-lite",
- "prompt_version": "v1",
+ "prompt_version": "v2",
  "policy_version": "v1",
  "tools_version": "v1",
  "index_version": "none: evidence is passed inline with each case; no retrieval, index or chunking",
  "artifact_sha": {
-  "prompt": "435575c494b5",
+  "prompt": "3b02669f8012",
   "policy": "2c29986ed875",
   "tools": "9bd332153a1d"
  },
