@@ -29,7 +29,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          LLM_MIN_INTERVAL: ${{ vars.LLM_MIN_INTERVAL || '0' }}
+          LLM_MIN_INTERVAL: ${{ vars.LLM_MIN_INTERVAL || '4.5' }}
           AUDIT_LOG: audit_log.jsonl
         run: python eval_gate.py --gate | tee gate_output.txt; exit ${PIPESTATUS[0]}
       - name: Keep the report
