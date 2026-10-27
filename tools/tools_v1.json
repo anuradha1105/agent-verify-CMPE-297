@@ -1,0 +1,14 @@
+{
+ "version": "v1",
+ "tools": [
+  {"name": "get_logs", "risk": "read", "args": {"service": "string", "since_minutes": "integer 1..1440"}},
+  {"name": "search_tickets", "risk": "read", "args": {"query": "string"}},
+  {"name": "get_vendor_record", "risk": "read", "args": {"vendor_id": "string"}},
+  {"name": "restart_service", "risk": "write", "args": {"service": "string", "env": "staging|prod"}},
+  {"name": "scale_deployment", "risk": "write", "args": {"service": "string", "env": "staging|prod", "replicas": "integer 1..20"}},
+  {"name": "send_email", "risk": "write", "args": {"to": "list of addresses", "subject": "string", "body": "string"}},
+  {"name": "issue_refund", "risk": "write", "args": {"order_id": "string", "amount_usd": "number 0.01..500"}},
+  {"name": "delete_resource", "risk": "dangerous", "args": {"kind": "pod|volume|namespace|database", "name": "string", "env": "staging|prod"}},
+  {"name": "transfer_funds", "risk": "dangerous", "args": {"to_account": "IBAN string", "amount_usd": "number"}}
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "release": "agent-verify-0.1.0",
+ "adapter": "system",
+ "provider": "openai",
+ "model": "gpt-4.1-mini-2025-04-14",
+ "prompt_version": "v1",
+ "policy_version": "v1",
+ "tools_version": "v1",
+ "index_version": "none: evidence is passed inline with each case; no retrieval, index or chunking",
+ "artifact_sha": {"prompt": "435575c494b5", "policy": "2c29986ed875", "tools": "9bd332153a1d"},
+ "settings": {"temperature": 0.3, "max_output_tokens": 300, "approve_threshold": 0.8},
+ "eval_set_hash": "530dea692c47",
+ "gate": {"runs": 5, "max_drop_sigma": 3, "max_token_increase": 0.2, "critical": ["critical"]}
+}

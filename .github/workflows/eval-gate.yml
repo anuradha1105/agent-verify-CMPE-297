@@ -1,0 +1,32 @@
+# Runs the eval gate on every pull request. The model key lives in a repository secret
+# (Settings > Secrets and variables > Actions > OPENAI_API_KEY or GEMINI_API_KEY). Never commit a key.
+name: eval-gate
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # standard library only: nothing to pip install
+      - name: Eval gate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_MIN_INTERVAL: ${{ vars.LLM_MIN_INTERVAL || '0' }}
+          AUDIT_LOG: audit_log.jsonl
+        run: python eval_gate.py --gate | tee gate_output.txt; exit ${PIPESTATUS[0]}
+      - name: Keep the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate-report
+          path: |
+            gate_report.json
+            gate_output.txt
+            audit_log.jsonl

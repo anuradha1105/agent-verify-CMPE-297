@@ -1,0 +1,29 @@
+# Manual: measure the noise floor (A/A) of the current release and upload baseline.json.
+# Actions tab > baseline > Run workflow. Download the artifact, commit baseline.json.
+name: baseline
+on:
+  workflow_dispatch:
+jobs:
+  aa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: A/A runs
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_MIN_INTERVAL: ${{ vars.LLM_MIN_INTERVAL || '0' }}
+          AUDIT_LOG: audit_log.jsonl
+        run: python eval_gate.py --aa | tee aa_output.txt; exit ${PIPESTATUS[0]}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: baseline
+          path: |
+            baseline.json
+            aa_output.txt
+            audit_log.jsonl
