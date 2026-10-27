@@ -31,7 +31,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           LLM_MIN_INTERVAL: ${{ vars.LLM_MIN_INTERVAL || '4.5' }}
           AUDIT_LOG: audit_log.jsonl
-        run: python eval_gate.py --gate | tee gate_output.txt; exit ${PIPESTATUS[0]}
+        run: python eval_gate.py --gate 2>&1 | tee gate_output.txt; exit ${PIPESTATUS[0]}
       - name: Keep the report
         if: always()
         uses: actions/upload-artifact@v4

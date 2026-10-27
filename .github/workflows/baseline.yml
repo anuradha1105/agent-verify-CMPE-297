@@ -28,7 +28,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           LLM_MIN_INTERVAL: ${{ vars.LLM_MIN_INTERVAL || '4.5' }}
           AUDIT_LOG: audit_log.jsonl
-        run: python eval_gate.py --aa --aa-runs 6 | tee baseline_output.txt; exit ${PIPESTATUS[0]}
+        run: python eval_gate.py --aa --aa-runs 6 2>&1 | tee baseline_output.txt; exit ${PIPESTATUS[0]}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -37,10 +37,13 @@ jobs:
             baseline.json
             baseline_output.txt
             audit_log.jsonl
-      - name: Commit baseline.json
+      - name: Commit baseline.json (and the output, even on failure)
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add baseline.json baseline_output.txt
+          git add baseline_output.txt
+          [ -f baseline.json ] && git add baseline.json
+          [ -f audit_log.jsonl ] && cp audit_log.jsonl baseline_audit_log.jsonl && git add baseline_audit_log.jsonl
           git commit -m "baseline: A/A noise floor for $(python -c "import json;print(json.load(open('manifest.json'))['release'])") (run ${{ github.run_id }})"
           git push
