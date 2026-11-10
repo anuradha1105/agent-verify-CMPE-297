@@ -21,7 +21,6 @@ Check kinds a test case may use:
     ["regex", "pattern"]     the answer matches this regular expression
 """
 import argparse
-import hashlib
 import importlib
 import json
 import math
@@ -29,6 +28,8 @@ import os
 import re
 import statistics
 import sys
+
+from agent_verify.digest import alg_of, digest
 
 HERE = os.getcwd()
 REFUSAL = re.compile(r"do not have that information|cannot answer|not in the (catalog|documents|context)", re.I)
@@ -42,9 +43,9 @@ def load_cases(path="eval_set.jsonl"):
     return cases
 
 
-def eval_set_hash(cases):
+def eval_set_hash(cases, alg="sha256"):
     canon = json.dumps(sorted(cases, key=lambda c: c["id"]), sort_keys=True, ensure_ascii=True)
-    return hashlib.sha256(canon.encode()).hexdigest()[:12]
+    return digest(canon, alg)
 
 
 def check(answer, kind, arg):
@@ -108,11 +109,11 @@ def main():
     args = ap.parse_args()
 
     cases = load_cases()
-    h = eval_set_hash(cases)
+    manifest = json.load(open("manifest.json", encoding="utf-8"))
+    h = eval_set_hash(cases, alg_of(manifest))
     if args.hash:
         print(h)
         return 0
-    manifest = json.load(open("manifest.json", encoding="utf-8"))
     if manifest.get("eval_set_hash") != h:
         print(f"BLOCK: manifest.json says eval set {manifest.get('eval_set_hash')}, the file hashes to {h}. "
               "Update the manifest in the same pull request as the eval set.")
