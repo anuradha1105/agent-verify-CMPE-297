@@ -10,19 +10,19 @@ At load time the file hashes of the prompt, policy and tool registry are checked
 so a prompt edit without a version bump fails loudly instead of slipping into a release.
 """
 import datetime
-import hashlib
 import json
 import os
 import re
 
 from . import llm
+from .digest import alg_of, digest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DECISIONS = ("APPROVE", "REVIEW", "BLOCK")
 
 
-def file_sha(path):
-    return hashlib.sha256(open(path, "rb").read()).hexdigest()[:12]
+def file_sha(path, alg="sha256"):
+    return digest(open(path, "rb").read(), alg)
 
 
 def artifact_paths(m):
@@ -34,9 +34,10 @@ def artifact_paths(m):
 def load(manifest_path=None):
     m = json.load(open(manifest_path or os.path.join(ROOT, "manifest.json"), encoding="utf-8"))
     paths = artifact_paths(m)
+    alg = alg_of(m)
     for name, p in paths.items():
         want = m.get("artifact_sha", {}).get(name)
-        got = file_sha(p)
+        got = file_sha(p, alg)
         if want != got:
             raise RuntimeError(f"{name} file {os.path.basename(p)} hashes to {got} but manifest.json says {want}. "
                                "Bump its version (or update artifact_sha) in the same pull request.")
@@ -94,7 +95,7 @@ def audit(case_text, r, manifest):
         return
     rec = {"ts": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
            "release": manifest["release"], "model": manifest["model"],
-           "case_sha": hashlib.sha256(case_text.encode()).hexdigest()[:12],
+           "case_sha": digest(case_text, alg_of(manifest)), "hash_alg": alg_of(manifest),
            "decision": r["decision"], "confidence": r["confidence"], "reason": r["reason"],
            "evidence": r["evidence"], "usage": r["usage"]}
     with open(path, "a", encoding="utf-8") as f:
