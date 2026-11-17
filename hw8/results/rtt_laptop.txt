@@ -1,0 +1,8 @@
+team laptop, home Wi-Fi, San Jose CA, 2026-11-16 ~21:44 PST
+$ python3 hw8/rtt_probe.py --file hw8/endpoints.txt --count 20
+
+endpoint                                  ok fail  tcp median   tcp p95  tls median
+generativelanguage.googleapis.com:443     20    0        11.2      37.7        64.7
+us-west1-aiplatform.googleapis.com:443    19    1        11.8      35.8        68.6   (TimeoutError: _ssl.c:1063: The handshake operation timed out)
+api.openai.com:443                        20    0        11.8      15.7        54.4
+github.com:443                            20    0        25.6      35.8        65.2
