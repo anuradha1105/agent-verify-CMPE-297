@@ -1,0 +1,9 @@
+# Agent Verify dependencies. Measure from (1) a team laptop in San Jose and (2) a GitHub Actions runner.
+# LLM provider today (Gemini API, free tier)
+generativelanguage.googleapis.com:443
+# LLM provider, proposed placement (Vertex AI, regional endpoint us-west1 / Oregon)
+us-west1-aiplatform.googleapis.com:443
+# fallback provider named in llm.py (unused by manifest today)
+api.openai.com:443
+# platform the code runs on (repo, Actions, secrets, artifacts)
+github.com:443

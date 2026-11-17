@@ -7,4 +7,4 @@ MANIFEST, SYSTEM_PROMPT = verifier.load()
 
 
 def answer(question):
-    return verifier.format_line(verifier.verify(question, MANIFEST, SYSTEM_PROMPT))
+    return verifier.format_line(verifier.verify(question, MANIFEST, SYSTEM_PROMPT, fail_closed=False))

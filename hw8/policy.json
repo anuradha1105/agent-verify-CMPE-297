@@ -1,0 +1,28 @@
+{
+  "about": "Agent Verify, target deployment from the placement table. The verifier runs as an internal service next to the enterprise agent; case evidence may leave it only to the pinned regional model endpoint, the audit store and the human review queue. CI runs the eval gate on synthetic cases only.",
+  "zones": ["internet", "agent", "verifier", "llm_api", "audit_store", "review_queue", "ci_runner", "github", "admin"],
+  "ports": [22, 443, 8443],
+  "rules": [
+    ["agent", "verifier", 8443, "allow"],
+    ["verifier", "llm_api", 443, "allow"],
+    ["verifier", "audit_store", 443, "allow"],
+    ["verifier", "review_queue", 443, "allow"],
+    ["review_queue", "audit_store", 443, "allow"],
+    ["ci_runner", "llm_api", 443, "allow"],
+    ["ci_runner", "github", 443, "allow"],
+    ["admin", "verifier", 22, "allow"],
+    ["admin", "github", 443, "allow"],
+    ["internet", "any", "any", "deny"],
+    ["any", "any", "any", "deny"]
+  ],
+  "invariants": [
+    {"kind": "must_reach", "from": "agent", "to": "verifier", "port": 8443},
+    {"kind": "must_reach", "from": "verifier", "to": "llm_api", "port": 443},
+    {"kind": "must_reach", "from": "verifier", "to": "audit_store", "port": 443},
+    {"kind": "must_not_reach", "from": "internet", "to": "audit_store", "port": "any"},
+    {"kind": "must_not_reach", "from": "agent", "to": "audit_store", "port": "any"},
+    {"kind": "must_not_reach", "from": "verifier", "to": "github", "port": "any"},
+    {"kind": "must_not_reach", "from": "ci_runner", "to": "audit_store", "port": "any"},
+    {"kind": "only_reaches", "from": "verifier", "allowed": [["llm_api", 443], ["audit_store", 443], ["review_queue", 443]]}
+  ]
+}

@@ -1,0 +1,12 @@
+run: 44024263107  date: 2026-11-17T05:27Z  runner: ubuntu-latest
+runner location: San Jose California US | Microsoft Corporation
+python 3.12.16 | OpenSSL 3.5.5 27 Jan 2026
+
+endpoint                                  ok fail  tcp median   tcp p95  tls median
+generativelanguage.googleapis.com:443     20    0         2.6      22.3        24.7
+us-west1-aiplatform.googleapis.com:443    20    0         2.7      19.6        24.7
+api.openai.com:443                        20    0         2.7       3.7        10.3
+github.com:443                            20    0        19.5      22.5        23.6
+
+ms. The TCP connection is one round trip; a TLS 1.3 handshake is usually one more.
+wrote hw8/results/rtt_runner.csv

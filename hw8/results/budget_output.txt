@@ -1,0 +1,9 @@
+component                                     ms  share  source
+verifier: load artifacts + SHA-256 pin check       0.3     0%  measured: time_call.py on the GitHub Actions runner (run 44024263107); once per process
+verifier -> Gemini: TCP connect              2.6     0%  rtt_probe.py from the GitHub Actions runner (San Jose) to generativelanguage.googleapis.com (median of 20)
+verifier -> Gemini: TLS 1.3 handshake       24.7     1%  rtt_probe.py tls median; paid on every call because urllib does not keep connections alive
+Gemini: request + model + answer + download    2109.2    99%  time_call.py median 2137 ms (n=5) minus TCP and TLS above; non-streaming
+verifier: parse JSON + threshold + audit append       0.5     0%  measured: 200 calls with the model stubbed (p50 0.02 ms max 0.49 ms)
+TOTAL                                     2137.3
+deadline 2000 ms: MISSES it by 137.3 ms
+largest component: Gemini: request + model + answer + download (2109.2 ms). Start there.
