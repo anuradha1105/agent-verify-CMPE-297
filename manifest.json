@@ -7,6 +7,7 @@
  "policy_version": "v1",
  "tools_version": "v1",
  "index_version": "none: evidence is passed inline with each case; no retrieval, index or chunking",
+ "hash_alg": "sha256",
  "artifact_sha": {
   "prompt": "3b02669f8012",
   "policy": "2c29986ed875",
