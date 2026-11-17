@@ -1,0 +1,7 @@
+call 1:    1416 ms  APPROVE  out_tokens=114
+call 2:    8180 ms  APPROVE  out_tokens=103
+call 3:    2004 ms  APPROVE  out_tokens=178
+call 4:    2137 ms  APPROVE  out_tokens=81
+call 5:    2708 ms  APPROVE  out_tokens=72
+artifact load + SHA check: 0.3 ms (once per process)
+end-to-end verify(): median 2137 ms, max 8180 ms, n=5

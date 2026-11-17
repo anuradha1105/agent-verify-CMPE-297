@@ -1,0 +1,5 @@
+endpoint,ok,failed,tcp_median_ms,tcp_p95_ms,tls_median_ms,first_error
+generativelanguage.googleapis.com:443,20,0,2.64,22.34,24.69,
+us-west1-aiplatform.googleapis.com:443,20,0,2.67,19.57,24.68,
+api.openai.com:443,20,0,2.74,3.72,10.26,
+github.com:443,20,0,19.46,22.53,23.62,
