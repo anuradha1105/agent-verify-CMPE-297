@@ -1,0 +1,1 @@
+PASS: all 8 invariant(s) hold for 11 rule(s)

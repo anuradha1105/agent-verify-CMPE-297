@@ -1,0 +1,4 @@
+PLANTED at the top: ['verifier', 'github', 443, 'allow']
+FAIL: 2 violation(s) of 8 invariant(s)
+  - must_not_reach: verifier -> github:443 is allowed
+  - only_reaches: verifier -> github:443 is allowed

@@ -1,6 +1,6 @@
 component,ms,source
-verifier: load artifacts + SHA-256 pin check,35,measured: perf_counter around verifier.load() (once per process; 0 for a long-running service)
-verifier -> Gemini: TCP connect,FILL_TCP,rtt_probe.py from the GitHub Actions runner to generativelanguage.googleapis.com (median of 20)
-verifier -> Gemini: TLS 1.3 handshake,FILL_TLS,rtt_probe.py tls median (urllib opens a new connection per call: no keep-alive)
-Gemini: upload ~6.4 KB request + model prefill + 56-token answer + download,FILL_MODEL,time_call.py median minus TCP and TLS above (non-streaming: we wait for the whole answer)
+verifier: load artifacts + SHA-256 pin check,0.3,measured: time_call.py on the GitHub Actions runner (run 44024263107); once per process
+verifier -> Gemini: TCP connect,2.6,rtt_probe.py from the GitHub Actions runner (San Jose) to generativelanguage.googleapis.com (median of 20)
+verifier -> Gemini: TLS 1.3 handshake,24.7,rtt_probe.py tls median; paid on every call because urllib does not keep connections alive
+Gemini: request + model + answer + download,2109.2,time_call.py median 2137 ms (n=5) minus TCP and TLS above; non-streaming
 verifier: parse JSON + threshold + audit append,0.5,measured: 200 calls with the model stubbed (p50 0.02 ms max 0.49 ms)
