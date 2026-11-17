@@ -1,10 +1,14 @@
-# HW8: measure round trips and one real call FROM WHERE THE CODE RUNS (a GitHub Actions runner).
-# Actions tab > hw8-measure > Run workflow. Copy the log into the report.
+# HW8: measure round trips and real verifier calls FROM WHERE THE CODE RUNS (a GitHub Actions runner).
+# Runs on a push to the hw8 branch (or Actions tab > hw8-measure > Run workflow) and commits the
+# results to hw8/results/ on the same branch. Prints the runner's city and provider, never its IP.
 name: hw8-measure
 on:
   workflow_dispatch:
+  push:
+    branches: [hw8]
+    paths: [".github/workflows/hw8-measure.yml", "hw8/endpoints.txt", "hw8/time_call.py"]
 permissions:
-  contents: read
+  contents: write
 jobs:
   measure:
     runs-on: ubuntu-latest
@@ -14,15 +18,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Where is this runner (city/region/provider only, no IP)
-        run: curl -s https://ipinfo.io/json | python -c "import json,sys;d=json.load(sys.stdin);print(d.get('city'),d.get('region'),d.get('country'),d.get('org'))" || true
-      - name: RTT probe
-        run: python hw8/rtt_probe.py --file hw8/endpoints.txt --count 20 --csv rtt_runner.csv
-      - name: Time 5 real verifier calls
+      - name: Measure
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python hw8/time_call.py --n 5
-      - uses: actions/upload-artifact@v4
-        with:
-          name: hw8-rtt
-          path: rtt_runner.csv
+        run: |
+          mkdir -p hw8/results
+          {
+            echo "run: ${{ github.run_id }}  date: $(date -u +%Y-%m-%dT%H:%MZ)  runner: ubuntu-latest"
+            echo -n "runner location: "
+            curl -s https://ipinfo.io/json | python -c "import json,sys;d=json.load(sys.stdin);print(d.get('city'),d.get('region'),d.get('country'),'|',d.get('org','').split(' ',1)[-1])" || echo unknown
+            python -c "import ssl,sys;print('python',sys.version.split()[0],'|',ssl.OPENSSL_VERSION)"
+            echo
+            python hw8/rtt_probe.py --file hw8/endpoints.txt --count 20 --csv hw8/results/rtt_runner.csv
+          } 2>&1 | tee hw8/results/rtt_runner.txt
+          python hw8/time_call.py --n 5 2>&1 | tee hw8/results/time_call_runner.txt
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add hw8/results
+          git commit -m "hw8: runner measurements (run ${{ github.run_id }})" && git push || echo "nothing to commit"

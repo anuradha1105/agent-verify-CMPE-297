@@ -65,12 +65,24 @@ def _parse(raw):
             "reason": " ".join(str(obj.get("reason", "")).split()), "evidence": ev}
 
 
-def verify(case_text, manifest=None, system=None):
+def verify(case_text, manifest=None, system=None, fail_closed=True):
+    """fail_closed=True: if the model cannot be reached, return REVIEW (and audit it) instead of raising.
+    The eval adapter (system.py) passes False, so an outage fails the eval run loudly instead of being
+    scored as REVIEW verdicts."""
     if manifest is None or system is None:
         manifest, system = load()
     s = manifest["settings"]
-    raw, usage = llm.complete(manifest["provider"], manifest["model"], system, case_text,
-                              s["temperature"], s["max_output_tokens"])
+    try:
+        raw, usage = llm.complete(manifest["provider"], manifest["model"], system, case_text,
+                                  s["temperature"], s["max_output_tokens"])
+    except llm.LLMUnavailable as e:
+        if not fail_closed:
+            raise
+        r = {"decision": "REVIEW", "confidence": 0.0, "evidence": [],
+             "reason": f"G4: model unavailable, failing closed to human review ({str(e)[:120]})",
+             "raw": "", "usage": {"input": 0, "output": 0}}
+        audit(case_text, r, manifest)
+        return r
     r = _parse(raw)
     # confidence-aware policy: a low-confidence approval is escalated, never auto-approved
     if r["decision"] == "APPROVE" and r["confidence"] < s["approve_threshold"]:

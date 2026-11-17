@@ -6,6 +6,12 @@ Keys come from the environment, never from the repository:
     GEMINI_API_KEY   for provider "gemini"
 Optional:
     LLM_MIN_INTERVAL seconds to wait between calls (use ~6.5 on the Gemini free tier)
+    LLM_TIMEOUT      seconds per socket operation (default 10)
+    LLM_NET_TRIES    attempts when the provider cannot be reached at all (default 2)
+
+LLMUnavailable (a subclass of LLMError) means the provider could not be reached or kept failing
+on its side. The verifier turns it into a REVIEW verdict (fail closed); configuration errors such
+as a missing or rejected key are still raised as plain LLMError.
 """
 import json
 import os
@@ -20,8 +26,15 @@ class LLMError(RuntimeError):
     pass
 
 
-def _post(url, headers, body, timeout=90, tries=6):
+class LLMUnavailable(LLMError):
+    """The provider could not be reached, or kept answering 429/5xx. Safe to fail closed on."""
+
+
+def _post(url, headers, body, timeout=None, tries=6):
     data = json.dumps(body).encode()
+    timeout = float(os.environ.get("LLM_TIMEOUT", "10")) if timeout is None else timeout
+    net_tries = int(os.environ.get("LLM_NET_TRIES", "2"))
+    net_fails = 0
     for attempt in range(tries):
         gap = float(os.environ.get("LLM_MIN_INTERVAL", "0"))
         wait = _last_call[0] + gap - time.time()
@@ -37,13 +50,15 @@ def _post(url, headers, body, timeout=90, tries=6):
             if e.code in (429, 500, 502, 503, 504) and attempt < tries - 1:
                 time.sleep(min(60, 2 ** attempt * 2))
                 continue
-            raise LLMError(f"HTTP {e.code}: {msg}") from None
-        except (urllib.error.URLError, TimeoutError) as e:
-            if attempt < tries - 1:
-                time.sleep(2 ** attempt)
+            err = LLMUnavailable if e.code in (429, 500, 502, 503, 504) else LLMError
+            raise err(f"HTTP {e.code}: {msg}") from None
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            net_fails += 1
+            if net_fails < net_tries and attempt < tries - 1:
+                time.sleep(1)
                 continue
-            raise LLMError(f"network: {e}") from None
-    raise LLMError("retries exhausted")
+            raise LLMUnavailable(f"network: {e}") from None
+    raise LLMUnavailable("retries exhausted")
 
 
 def _key(name):
